@@ -1,8 +1,11 @@
 import { Module, OnModuleInit, Logger } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
-import { UserModule } from './modules/user/user.module';
 import { AuthModule } from './modules/auth/auth.module';
+import { TasksModule } from './modules/tasks/tasks.module';
+import { CoursesModule } from './modules/courses/courses.module';
+import { UsersModule } from './modules/users/users.module';
+import { StudentsModule } from './modules/students/students.module';
 import * as mongoose from 'mongoose';
 
 @Module({
@@ -21,8 +24,11 @@ import * as mongoose from 'mongoose';
     }),
 
     // Import feature modules
-    UserModule,
     AuthModule,
+    TasksModule,
+    CoursesModule,
+    UsersModule,
+    StudentsModule,
   ],
 })
 export class AppModule implements OnModuleInit {

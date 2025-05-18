@@ -1,0 +1,90 @@
+### ✅ **NodeJS / Backend Developer Test Task**
+
+**Goal:**
+Build a simple RESTful API for a **Task and Course Management System** using **NestJS**, **TypeScript**, and **MongoDB**.
+
+---
+
+### 🔧 **Requirements:**
+
+#### 📌 Functional Requirements:
+
+##### 1. **User Authentication**
+
+* Implement JWT-based authentication.
+* Endpoints:
+
+  * `POST /auth/register` – Register a new user
+  * `POST /auth/login` – Login and receive a JWT token
+
+##### 2. **Task Management**
+
+* Endpoints:
+
+  * `POST /tasks` – Create a new task
+  * `GET /tasks` – List all tasks for the authenticated user
+  * `GET /tasks/:id` – Get a specific task
+  * `PUT /tasks/:id` – Update a task
+  * `DELETE /tasks/:id` – Delete a task
+* Fields:
+
+  * `title` (string)
+  * `description` (string)
+  * `status` (enum: `pending`, `in-progress`, `done`)
+  * `dueDate` (ISO date)
+  * `createdBy` (reference to user)
+
+##### 3. **Course Management**
+
+* Entities: **Course**, **Student**
+
+* Endpoints:
+
+  * `POST /courses` – Create a new course (admin-only)
+  * `GET /courses` – List all available courses
+  * `POST /students/register` – Register a student (email, name, password)
+  * `POST /courses/:courseId/register` – Register the authenticated student for a course
+  * `GET /students/:id/courses` – View all courses a student is registered in
+
+* Models:
+
+  * **Course**: `title`, `description`, `startDate`, `endDate`
+  * **Student**: `name`, `email`, `password`, `registeredCourses` (array of Course references)
+
+* Rules:
+
+  * A student can register for multiple courses.
+  * A course cannot be registered twice by the same student.
+  * Access to student data must be protected by authentication and role check (student only sees their data).
+
+---
+
+### 📌 Technical Requirements:
+
+* Use **NestJS** with **TypeScript**
+* Use **MongoDB** with **Mongoose**
+* Use **JWT** for authentication
+* Use **bcrypt** for password hashing
+* Use `class-validator` for DTO validation
+* Follow best practices for folder structure (modular, clean)
+* Store all user-related data in a `users` collection with roles (`student`, `admin`)
+
+---
+
+### 📦 Bonus Points (Optional):
+
+* Include Swagger API documentation
+* Implement role-based access control using NestJS Guards
+* Write unit tests for the task and course modules
+
+---
+
+### 📤 **Submission Guidelines:**
+
+* Submit a link to the **GitHub repository**
+* Include a clear `README.md` file with:
+
+  * Setup and installation instructions
+  * Description of API endpoints
+  * Instructions to generate a JWT token
+  * Sample student login credentials

@@ -11,8 +11,8 @@ export class User {
   @Prop({ required: true, trim: true })
   name: string;
 
-  @Prop({ 
-    required: true, 
+  @Prop({
+    required: true,
     unique: true,
     trim: true,
     lowercase: true,
@@ -20,9 +20,9 @@ export class User {
   })
   email: string;
 
-  @Prop({ 
+  @Prop({
     required: true,
-    select: false 
+    select: false
   })
   password: string;
 
@@ -35,10 +35,18 @@ export const UserSchema = SchemaFactory.createForClass(User);
 // Index for email
 UserSchema.index({ email: 1 });
 
-// Hash password before save
+// Hash password before saving
 UserSchema.pre('save', async function (this: any, next) {
   if (this.isModified('password')) {
     this.password = await bcrypt.hash(this.password, 10);
   }
   next();
+});
+
+// Remove version from response
+UserSchema.set('toJSON', {
+  transform: (doc, ret) => {
+    delete ret.__v;
+    return ret;
+  },
 });
