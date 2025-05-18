@@ -43,13 +43,12 @@ Build a simple RESTful API for a **Task and Course Management System** using **N
   * `POST /courses` – Create a new course (admin-only)
   * `POST /courses/:courseId/register` – Register the authenticated student for a course
   * `GET /courses` – List all available courses
-  * `POST /students/register` – Register a student (email, name, password)
-  * `GET /students/:id/courses` – View all courses a student is registered in
+  * `GET /courses/:studentId/courses` – View all courses a student is registered in
 
 * Models:
 
   * **Course**: `title`, `description`, `startDate`, `endDate`
-  * **Student**: `name`, `email`, `password`, `registeredCourses` (array of Course references)
+  * **User**: `name`, `email`, `password`, `registeredCourses` (array of Course references)
 
 * Rules:
 

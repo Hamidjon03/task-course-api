@@ -188,3 +188,60 @@ export class DeleteCourseResponseDto extends CourseBaseResponseDto {
   })
   data: CourseDataResponseDto;
 }
+
+// Register for course response
+export class RegisterCourseResponseDto extends CourseBaseResponseDto {
+  @ApiProperty({
+    description: 'HTTP status code',
+    example: 200,
+  })
+  override statusCode: number = 200;
+
+  @ApiProperty({
+    description: 'Response message',
+    example: 'Successfully registered for the course',
+  })
+  override message: string = 'Successfully registered for the course';
+
+  @ApiProperty({
+    description: 'Response data',
+    type: CourseDataResponseDto,
+  })
+  data: CourseDataResponseDto;
+}
+
+// Student courses response
+export class StudentCoursesDataResponseDto {
+  @ApiProperty({
+    description: 'List of courses the student is registered in',
+    type: [CourseResponseDto],
+  })
+  courses: CourseResponseDto[];
+
+  @ApiProperty({
+    description: 'Student ID',
+    example: '682967986d5df0e1ae1fb625',
+  })
+  studentId: string;
+}
+
+// Get student courses response
+export class GetStudentCoursesResponseDto extends CourseBaseResponseDto {
+  @ApiProperty({
+    description: 'HTTP status code',
+    example: 200,
+  })
+  override statusCode: number = 200;
+
+  @ApiProperty({
+    description: 'Response message',
+    example: 'Student courses retrieved successfully',
+  })
+  override message: string = 'Student courses retrieved successfully';
+
+  @ApiProperty({
+    description: 'Response data',
+    type: StudentCoursesDataResponseDto,
+  })
+  data: StudentCoursesDataResponseDto;
+}

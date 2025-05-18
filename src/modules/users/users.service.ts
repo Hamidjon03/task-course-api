@@ -40,6 +40,9 @@ export class UsersService {
   }
 
   async update(id: string, updateUserDto: UpdateUserDto): Promise<User> {
+    if (!isValidObjectId(id)) {
+      throw new BadRequestException('Invalid user ID format');
+    }
     const updatedUser = await this.userModel
       .findByIdAndUpdate(id, updateUserDto, { new: true })
       .exec();
@@ -51,6 +54,9 @@ export class UsersService {
   }
 
   async remove(id: string): Promise<User> {
+    if (!isValidObjectId(id)) {
+      throw new BadRequestException('Invalid user ID format');
+    }
     const deletedUser = await this.userModel.findByIdAndDelete(id).exec();
     if (!deletedUser) {
       throw new NotFoundException(`User #${id} not found`);

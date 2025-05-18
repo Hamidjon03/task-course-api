@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument } from 'mongoose';
+import { HydratedDocument, Schema as MongooseSchema, Types } from 'mongoose';
 import { UserRole } from 'src/common/enums/user-role.enum';
 import * as bcrypt from 'bcrypt';
 
@@ -28,6 +28,9 @@ export class User {
 
   @Prop({ enum: UserRole, default: UserRole.STUDENT })
   role: UserRole;
+
+  @Prop({ type: [MongooseSchema.Types.ObjectId], ref: 'Course', default: [] })
+  registeredCourses: Types.ObjectId[];
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

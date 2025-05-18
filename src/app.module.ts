@@ -5,7 +5,6 @@ import { AuthModule } from './modules/auth/auth.module';
 import { TasksModule } from './modules/tasks/tasks.module';
 import { CoursesModule } from './modules/courses/courses.module';
 import { UsersModule } from './modules/users/users.module';
-import { StudentsModule } from './modules/students/students.module';
 import * as mongoose from 'mongoose';
 
 @Module({
@@ -28,7 +27,6 @@ import * as mongoose from 'mongoose';
     TasksModule,
     CoursesModule,
     UsersModule,
-    StudentsModule,
   ],
 })
 export class AppModule implements OnModuleInit {

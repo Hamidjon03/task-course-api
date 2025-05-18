@@ -12,7 +12,7 @@ import { UserRole } from 'src/common/enums/user-role.enum';
 @ApiTags('Users')
 @ApiBearerAuth('JWT-auth')
 @Controller('users')
-@UseGuards(JwtAuthGuard, RolesGuard)
+@UseGuards(JwtAuthGuard)
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
@@ -27,7 +27,6 @@ export class UsersController {
   })
   @ResponseMessage('User successfully created')
   @Post()
-  @Roles(UserRole.STUDENT)
   create(@Body() createUserDto: CreateUserDto) {
     return this.usersService.create(createUserDto);
   }
@@ -39,12 +38,12 @@ export class UsersController {
   })
   @ResponseMessage('Users retrieved successfully')
   @Get()
-  @Roles(UserRole.STUDENT)
+  @Roles(UserRole.ADMIN)
   findAll() {
     return this.usersService.findAll();
   }
 
-  @ApiOperation({ summary: 'Get user by ID' })
+  @ApiOperation({ summary: 'Get a specific user by ID' })
   @ApiResponse({ 
     status: 200, 
     description: 'User retrieved successfully'
@@ -55,12 +54,12 @@ export class UsersController {
   })
   @ResponseMessage('User retrieved successfully')
   @Get(':id')
-  @Roles(UserRole.STUDENT)
+  @Roles(UserRole.ADMIN)
   findOne(@Param('id') id: string) {
     return this.usersService.findOne(id);
   }
 
-  @ApiOperation({ summary: 'Update user' })
+  @ApiOperation({ summary: 'Update a user' })
   @ApiResponse({ 
     status: 200, 
     description: 'User updated successfully'
@@ -71,12 +70,12 @@ export class UsersController {
   })
   @ResponseMessage('User updated successfully')
   @Patch(':id')
-  @Roles(UserRole.STUDENT)
+  @Roles(UserRole.ADMIN)
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     return this.usersService.update(id, updateUserDto);
   }
 
-  @ApiOperation({ summary: 'Delete user' })
+  @ApiOperation({ summary: 'Delete a user' })
   @ApiResponse({ 
     status: 200, 
     description: 'User deleted successfully'
@@ -87,7 +86,7 @@ export class UsersController {
   })
   @ResponseMessage('User deleted successfully')
   @Delete(':id')
-  @Roles(UserRole.STUDENT)
+  @Roles(UserRole.ADMIN)
   remove(@Param('id') id: string) {
     return this.usersService.remove(id);
   }

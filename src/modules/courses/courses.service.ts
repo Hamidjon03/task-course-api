@@ -1,14 +1,16 @@
 import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException, ConflictException, HttpStatus } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { isValidObjectId, Model } from 'mongoose';
+import { isValidObjectId, Model, Types } from 'mongoose';
 import { CreateCourseDto } from './dto/create-course.dto';
 import { UpdateCourseDto } from './dto/update-course.dto';
 import { Course, CourseDocument } from './schemas/course.schema';
+import { User, UserDocument } from '../users/schemas/user.schema';
 
 @Injectable()
 export class CoursesService {
   constructor(
     @InjectModel(Course.name) private readonly courseModel: Model<CourseDocument>,
+    @InjectModel(User.name) private readonly userModel: Model<UserDocument>,
   ) {}
 
   async create(createCourseDto: CreateCourseDto) {
@@ -123,6 +125,63 @@ export class CoursesService {
     return {
       data: {
         course: deletedCourse
+      }
+    };
+  }
+
+  async registerStudentForCourse(courseId: string, userId: string) {
+    if (!isValidObjectId(courseId) || !isValidObjectId(userId)) {
+      throw new BadRequestException('Invalid ID format');
+    }
+
+    // Check if course exists
+    const course = await this.courseModel.findById(courseId).exec();
+    if (!course) {
+      throw new NotFoundException(`Course with ID ${courseId} not found`);
+    }
+
+    // Check if user exists
+    const user = await this.userModel.findById(userId).exec();
+    if (!user) {
+      throw new NotFoundException(`User with ID ${userId} not found`);
+    }
+
+    // Check if user is already registered for this course
+    if (user.registeredCourses.includes(new Types.ObjectId(courseId))) {
+      throw new ConflictException('You are already registered for this course');
+    }
+
+    // Add course to user's registered courses
+    user.registeredCourses.push(new Types.ObjectId(courseId));
+    await user.save();
+
+    return {
+      data: {
+        course: course
+      }
+    };
+  }
+
+  async getStudentCourses(studentId: string) {
+    if (!isValidObjectId(studentId)) {
+      throw new BadRequestException('Invalid student ID format');
+    }
+
+    // Check if user exists
+    const user = await this.userModel.findById(studentId).exec();
+    if (!user) {
+      throw new NotFoundException(`User with ID ${studentId} not found`);
+    }
+
+    // Get all courses the student is registered for
+    const courses = await this.courseModel
+      .find({ _id: { $in: user.registeredCourses } })
+      .exec();
+
+    return {
+      data: {
+        courses: courses,
+        studentId: studentId
       }
     };
   }
