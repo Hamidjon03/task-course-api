@@ -39,20 +39,7 @@ export class TasksService {
   }
 
   async findOne(id: string, userId: string) {
-    if (!isValidObjectId(id)) {
-      throw new BadRequestException('Invalid task ID format');
-    }
-    
-    const task = await this.taskModel.findById(id).exec();
-    
-    if (!task) {
-      throw new NotFoundException(`Task with ID ${id} not found`);
-    }
-    
-    // Check if the task belongs to the user
-    if (task.createdBy.toString() !== userId) {
-      throw new ForbiddenException(`You don't have permission to access this task`);
-    }
+    const task = await this.findTaskAndVerifyOwner(id, userId);
     
     return {
       data: {
@@ -62,21 +49,7 @@ export class TasksService {
   }
 
   async update(id: string, updateTaskDto: UpdateTaskDto, userId: string) {
-    if (!isValidObjectId(id)) {
-      throw new BadRequestException('Invalid task ID format');
-    }
-    
-    // First check if the task exists
-    const task = await this.taskModel.findById(id).exec();
-    
-    if (!task) {
-      throw new NotFoundException(`Task with ID ${id} not found`);
-    }
-    
-    // Check if the task belongs to the user
-    if (task.createdBy.toString() !== userId) {
-      throw new ForbiddenException(`You don't have permission to modify this task`);
-    }
+    const task = await this.findTaskAndVerifyOwner(id, userId);
     
     // Now update the task
     const updatedTask = await this.taskModel
@@ -91,21 +64,7 @@ export class TasksService {
   }
 
   async remove(id: string, userId: string) {
-    if (!isValidObjectId(id)) {
-      throw new BadRequestException('Invalid task ID format');
-    }
-    
-    // First check if the task exists
-    const task = await this.taskModel.findById(id).exec();
-    
-    if (!task) {
-      throw new NotFoundException(`Task with ID ${id} not found`);
-    }
-    
-    // Check if the task belongs to the user
-    if (task.createdBy.toString() !== userId) {
-      throw new ForbiddenException(`You don't have permission to delete this task`);
-    }
+    const task = await this.findTaskAndVerifyOwner(id, userId);
     
     // Now delete the task
     const deletedTask = await this.taskModel
@@ -117,5 +76,39 @@ export class TasksService {
         task: deletedTask
       }
     };
+  }
+
+  /**
+   * Finds task by ID, validates the task ID format, and checks ownership
+   * @param id Task ID to find
+   * @param userId User ID to check ownership
+   * @returns Task document if found and verified
+   * @throws BadRequestException if ID format is invalid
+   * @throws NotFoundException if task not found
+   * @throws ForbiddenException if user doesn't have permission
+   */
+  private async findTaskAndVerifyOwner(
+    id: string,
+    userId: string,
+  ): Promise<TaskDocument> {
+    if (!isValidObjectId(id)) {
+      throw new BadRequestException('Invalid task ID format');
+    }
+
+    const task = await this.taskModel.findById(id).exec();
+    if (!task) {
+      throw new NotFoundException(`Task with ID ${id} not found`);
+    }
+
+    const taskCreatorId = task.createdBy.toString().trim();
+    const requestUserId = userId.toString().trim();
+
+    if (taskCreatorId !== requestUserId) {
+      throw new ForbiddenException(
+        `You don't have permission to access this task`,
+      );
+    }
+
+    return task;
   }
 }
