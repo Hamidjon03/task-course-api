@@ -164,7 +164,7 @@ export class CoursesController {
   @Get('student/:studentId')
   getStudentCourses(@Param('studentId') studentId: string, @Req() req) {
     // Check if user is requesting their own courses or is an admin
-    if (req.user.userId !== studentId && req.user.role !== UserRole.ADMIN) {
+    if (req.user.userId.toString() !== studentId && req.user.role !== UserRole.ADMIN) {
       throw new ForbiddenException('You can only view your own registered courses');
     }
     return this.coursesService.getStudentCourses(studentId);

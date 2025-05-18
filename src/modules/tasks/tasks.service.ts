@@ -1,9 +1,10 @@
-import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException, ForbiddenException, HttpStatus } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException, ForbiddenException, HttpStatus, ConflictException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { isValidObjectId, Model } from 'mongoose';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
 import { Task, TaskDocument } from './schemas/task.schema';
+import { TaskStatus } from '../../common/enums/task-status.enum';
 
 @Injectable()
 export class TasksService {
@@ -13,6 +14,17 @@ export class TasksService {
 
   async create(createTaskDto: CreateTaskDto, userId: string) {
     try {
+      // Check for duplicate tasks that are not yet completed
+      const duplicate = await this.taskModel.findOne({
+        createdBy: userId,
+        title: createTaskDto.title,
+        status: { $in: [TaskStatus.PENDING, TaskStatus.IN_PROGRESS] }
+      });
+
+      if (duplicate) {
+        throw new ConflictException('This task already exists and is not yet completed.');
+      }
+
       const newTask = await this.taskModel.create({
         ...createTaskDto,
         createdBy: userId,
@@ -24,6 +36,9 @@ export class TasksService {
         }
       };
     } catch (error) {
+      if (error instanceof ConflictException) {
+        throw error; // Re-throw conflict exceptions
+      }
       throw new InternalServerErrorException('Failed to create task');
     }
   }
