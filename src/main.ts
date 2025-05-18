@@ -49,9 +49,6 @@ async function bootstrap() {
   
   const document = SwaggerModule.createDocument(app, swaggerConfig);
 
-  // Remove global security - we'll apply it at the controller level instead
-  // document.security = [{ 'JWT-auth': [] }];
-
   // Customize Swagger UI to automatically add Bearer prefix
   const customOptions = {
     swaggerOptions: {

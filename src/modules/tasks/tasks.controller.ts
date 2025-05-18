@@ -14,8 +14,8 @@ import {
 } from './dto/task-response.dto';
 
 @ApiTags('Tasks')
-@ApiBearerAuth('JWT-auth')
 @Controller('tasks')
+@ApiBearerAuth('JWT-auth')
 @UseGuards(JwtAuthGuard)
 export class TasksController {
   constructor(private readonly tasksService: TasksService) {}
