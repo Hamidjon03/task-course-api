@@ -17,21 +17,30 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       ignoreExpiration: false,
       secretOrKey: configService.get<string>('JWT_SECRET'),
     });
+
   }
 
   async validate(payload: any) {
-    const { sub: id } = payload;
-    
-    const user = await this.userModel.findById(id).exec();
-    if (!user) {
-      throw new UnauthorizedException('Invalid token');
+    try {
+
+      const { sub: id } = payload;
+
+      const user = await this.userModel.findById(id).exec();
+
+      if (!user) {
+        throw new UnauthorizedException('Invalid token');
+      }
+
+
+      return {
+        userId: user._id,
+        email: user.email,
+        name: user.name,
+        role: user.role,
+      };
+    } catch (error) {
+      console.error('JWT validation error:', error.message);
+      throw new UnauthorizedException('Token validation failed');
     }
-    
-    return {
-      id: user._id,
-      email: user.email,
-      name: user.name,
-      role: user.role,
-    };
   }
 }

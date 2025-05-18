@@ -22,18 +22,35 @@ import {
           ? exception.getStatus()
           : HttpStatus.INTERNAL_SERVER_ERROR;
   
-      const message =
-        exception instanceof HttpException
-          ? exception.getResponse()
-          : exception;
+      // Extract the error message properly
+      let errorMessage = 'Internal server error';
+      if (exception instanceof HttpException) {
+        const exceptionResponse = exception.getResponse();
+        if (typeof exceptionResponse === 'string') {
+          errorMessage = exceptionResponse;
+        } else if (typeof exceptionResponse === 'object' && exceptionResponse !== null) {
+          // Handle both formats: { message: string } and { message: { message: string, ... } }
+          const exceptionObj = exceptionResponse as Record<string, any>;
+          if (exceptionObj.message) {
+            if (typeof exceptionObj.message === 'string') {
+              errorMessage = exceptionObj.message;
+            } else if (typeof exceptionObj.message === 'object' && exceptionObj.message.message) {
+              errorMessage = exceptionObj.message.message;
+            }
+          }
+        }
+      } else if (exception instanceof Error) {
+        errorMessage = exception.message;
+      }
   
       this.logger.error(`❌ [${request.method}] ${request.url}`, exception instanceof Error ? exception.stack : '');
   
       response.status(status).json({
+        success: false,
         statusCode: status,
+        message: errorMessage,
         timestamp: new Date().toISOString(),
         path: request.url,
-        message,
       });
     }
   }

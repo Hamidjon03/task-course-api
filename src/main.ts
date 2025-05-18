@@ -34,12 +34,45 @@ async function bootstrap() {
     .setTitle(configService.get<string>('SWAGGER_TITLE', 'Task Course API'))
     .setDescription(configService.get<string>('SWAGGER_DESCRIPTION', 'Task Course API documentation'))
     .setVersion(configService.get<string>('SWAGGER_VERSION', '1.0'))
-    .addBearerAuth()
+    .addBearerAuth(
+      {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+        name: 'Authorization',
+        description: 'Enter JWT token',
+        in: 'header',
+      },
+      'JWT-auth' // This name here is important for references
+    )
     .build();
   
   const document = SwaggerModule.createDocument(app, swaggerConfig);
+
+  // Remove global security - we'll apply it at the controller level instead
+  // document.security = [{ 'JWT-auth': [] }];
+
+  // Customize Swagger UI to automatically add Bearer prefix
+  const customOptions = {
+    swaggerOptions: {
+      persistAuthorization: true,
+      authAction: {
+        'JWT-auth': {
+          name: 'JWT-auth',
+          schema: {
+            type: 'apiKey',
+            in: 'header',
+            name: 'Authorization',
+            description: 'JWT token'
+          },
+          value: 'Bearer '
+        }
+      }
+    },
+  };
+  
   const swaggerPath = configService.get<string>('SWAGGER_PATH', 'docs');
-  SwaggerModule.setup(swaggerPath, app, document);
+  SwaggerModule.setup(swaggerPath, app, document, customOptions);
   
   const port = configService.get<number>('PORT', 3000);
   

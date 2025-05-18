@@ -2,16 +2,17 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, HttpStatu
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiResponse, ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 import { ResponseMessage } from 'src/common/decorators/response-message.decorator';
-// import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-// import { RolesGuard } from '../auth/guards/roles.guard';
-// import { Roles } from 'src/common/decorators/roles.decorator';
-// import { UserRole } from 'src/common/enums/user-role.enum';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { RolesGuard } from '../auth/guards/roles.guard';
+import { Roles } from 'src/common/decorators/roles.decorator';
+import { UserRole } from 'src/common/enums/user-role.enum';
 
 @ApiTags('Users')
+@ApiBearerAuth('JWT-auth')
 @Controller('users')
-// @UseGuards(JwtAuthGuard, RolesGuard)
+@UseGuards(JwtAuthGuard, RolesGuard)
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
@@ -26,7 +27,7 @@ export class UsersController {
   })
   @ResponseMessage('User successfully created')
   @Post()
-  // @Roles(UserRole.ADMIN)
+  @Roles(UserRole.STUDENT)
   create(@Body() createUserDto: CreateUserDto) {
     return this.usersService.create(createUserDto);
   }
@@ -38,7 +39,7 @@ export class UsersController {
   })
   @ResponseMessage('Users retrieved successfully')
   @Get()
-  // @Roles(UserRole.ADMIN)
+  @Roles(UserRole.STUDENT)
   findAll() {
     return this.usersService.findAll();
   }
@@ -54,7 +55,7 @@ export class UsersController {
   })
   @ResponseMessage('User retrieved successfully')
   @Get(':id')
-  // @Roles(UserRole.ADMIN)
+  @Roles(UserRole.STUDENT)
   findOne(@Param('id') id: string) {
     return this.usersService.findOne(id);
   }
@@ -70,7 +71,7 @@ export class UsersController {
   })
   @ResponseMessage('User updated successfully')
   @Patch(':id')
-  // @Roles(UserRole.ADMIN)
+  @Roles(UserRole.STUDENT)
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     return this.usersService.update(id, updateUserDto);
   }
@@ -86,7 +87,7 @@ export class UsersController {
   })
   @ResponseMessage('User deleted successfully')
   @Delete(':id')
-  // @Roles(UserRole.ADMIN)
+  @Roles(UserRole.STUDENT)
   remove(@Param('id') id: string) {
     return this.usersService.remove(id);
   }

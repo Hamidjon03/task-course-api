@@ -11,11 +11,11 @@ export class AuthService {
   constructor(
     @InjectModel(User.name) private userModel: Model<User>,
     private jwtService: JwtService,
-  ) {}
+  ) { }
 
   async register(registerDto: RegisterDto) {
     const { email } = registerDto;
-    
+
     // Check if user already exists
     const existingUser = await this.userModel.findOne({ email }).exec();
     if (existingUser) {
@@ -25,7 +25,7 @@ export class AuthService {
     // Create new user
     const newUser = new this.userModel(registerDto);
     const savedUser = await newUser.save();
-    
+
     return {
       user: {
         _id: savedUser._id,
@@ -38,22 +38,31 @@ export class AuthService {
 
   async login(loginDto: LoginDto) {
     const { email, password } = loginDto;
-    
+
     // Find user by email with password included
     const user = await this.userModel.findOne({ email }).select('+password').exec();
     if (!user) {
       throw new UnauthorizedException('Invalid credentials');
     }
-    
+
     // Verify password
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
       throw new UnauthorizedException('Invalid credentials');
     }
-    
+
     // Generate token
     const payload = { sub: user._id, email: user.email, role: user.role };
-    
+
+    const token = this.jwtService.sign(payload);
+
+    // Verify token immediately to check if it's valid
+    try {
+      const decoded = this.jwtService.verify(token);
+    } catch (error) {
+      console.error('Token verification failed:', error.message);
+    }
+
     return {
       user: {
         _id: user._id,
@@ -61,7 +70,7 @@ export class AuthService {
         email: user.email,
         role: user.role,
       },
-      access_token: this.jwtService.sign(payload),
+      access_token: token,
     };
   }
 }
