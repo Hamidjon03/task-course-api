@@ -56,11 +56,6 @@ A RESTful API built with NestJS, TypeScript, and MongoDB that provides task mana
    ```bash
    # Development mode
    npm run start:dev
-   
-   # Production mode
-   npm run build
-   npm run start:prod
-   ```
 
 ## API Documentation
 
@@ -128,6 +123,5 @@ The Swagger UI provides a comprehensive interface to explore and test all availa
 
 - **Rate Limiting**: The API implements rate limiting to protect against abuse and DOS attacks:
   - Global rate limiting of 5 requests per minute for all API endpoints
-  - Specific stricter rate limiting for login endpoint to prevent brute force attacks
   - Custom error responses that indicate remaining time before retry is allowed
 

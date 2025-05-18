@@ -4,7 +4,6 @@ import { LoginDto, RegisterDto } from './dto/create-auth.dto';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthResponseDto, LoginResponseDto, RegisterResponseDto } from './dto/auth-response.dto';
 import { ResponseMessage } from '../../common/decorators/response-message.decorator';
-import { LoginThrottlerGuard } from './guards/login-throttler.guard';
 
 @ApiTags('Authentication')
 @Controller('auth')
@@ -42,7 +41,6 @@ export class AuthController {
     description: 'Too Many Requests - Rate limit exceeded'
   })
   @ResponseMessage('User successfully logged in')
-  @UseGuards(LoginThrottlerGuard)
   @Post('login')
   @HttpCode(HttpStatus.OK)
   login(@Body() loginDto: LoginDto) {
