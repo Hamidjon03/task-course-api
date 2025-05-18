@@ -123,3 +123,11 @@ The Swagger UI provides a comprehensive interface to explore and test all availa
 - LoginThrottlerGuard provides rate limiting for login attempts to prevent brute force attacks
 - JwtAuthGuard protects routes that require authentication
 - RolesGuard enforces role-based access control for admin-only endpoints
+
+### Security Features
+
+- **Rate Limiting**: The API implements rate limiting to protect against abuse and DOS attacks:
+  - Global rate limiting of 5 requests per minute for all API endpoints
+  - Specific stricter rate limiting for login endpoint to prevent brute force attacks
+  - Custom error responses that indicate remaining time before retry is allowed
+

@@ -1,12 +1,13 @@
 import { Module, OnModuleInit, Logger } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
-import { ThrottlerModule } from '@nestjs/throttler';
+import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { AuthModule } from './modules/auth/auth.module';
 import { TasksModule } from './modules/tasks/tasks.module';
 import { CoursesModule } from './modules/courses/courses.module';
 import { UsersModule } from './modules/users/users.module';
 import * as mongoose from 'mongoose';
+import { APP_GUARD } from '@nestjs/core';
 
 @Module({
   imports: [
@@ -28,7 +29,7 @@ import * as mongoose from 'mongoose';
       {
         name: 'short',
         ttl: 60000,
-        limit: 10,
+        limit: 5,
       },
     ]),
 
@@ -37,6 +38,12 @@ import * as mongoose from 'mongoose';
     TasksModule,
     CoursesModule,
     UsersModule,
+  ],
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
+    },
   ],
 })
 export class AppModule implements OnModuleInit {

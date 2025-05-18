@@ -1,9 +1,10 @@
-import { Controller, Post, Body, HttpCode, HttpStatus } from '@nestjs/common';
+import { Controller, Post, Body, HttpCode, HttpStatus, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginDto, RegisterDto } from './dto/create-auth.dto';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthResponseDto, LoginResponseDto, RegisterResponseDto } from './dto/auth-response.dto';
 import { ResponseMessage } from '../../common/decorators/response-message.decorator';
+import { LoginThrottlerGuard } from './guards/login-throttler.guard';
 
 @ApiTags('Authentication')
 @Controller('auth')
@@ -36,7 +37,12 @@ export class AuthController {
     status: 401, 
     description: 'Unauthorized - Invalid credentials'
   })
+  @ApiResponse({ 
+    status: 429, 
+    description: 'Too Many Requests - Rate limit exceeded'
+  })
   @ResponseMessage('User successfully logged in')
+  @UseGuards(LoginThrottlerGuard)
   @Post('login')
   @HttpCode(HttpStatus.OK)
   login(@Body() loginDto: LoginDto) {
