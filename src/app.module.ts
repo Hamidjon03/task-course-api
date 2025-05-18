@@ -1,6 +1,7 @@
 import { Module, OnModuleInit, Logger } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
+import { ThrottlerModule } from '@nestjs/throttler';
 import { AuthModule } from './modules/auth/auth.module';
 import { TasksModule } from './modules/tasks/tasks.module';
 import { CoursesModule } from './modules/courses/courses.module';
@@ -21,6 +22,15 @@ import * as mongoose from 'mongoose';
         uri: configService.get<string>('MONGO_URI'), // MongoDB connection string from .env
       }),
     }),
+
+    // Configure ThrottlerModule for rate limiting with correct v6 syntax
+    ThrottlerModule.forRoot([
+      {
+        name: 'short',
+        ttl: 60000,
+        limit: 10,
+      },
+    ]),
 
     // Import feature modules
     AuthModule,

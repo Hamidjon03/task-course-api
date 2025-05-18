@@ -44,7 +44,7 @@ export class RegisterDto {
 export class LoginDto {
   @ApiProperty({
     description: 'User email address',
-    example: 'john@example.com',
+    example: 'admin@example.com',
   })
   @IsEmail()
   @IsNotEmpty()

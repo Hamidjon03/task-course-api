@@ -1,98 +1,125 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Task and Course Management API
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+A RESTful API built with NestJS, TypeScript, and MongoDB that provides task management and course registration functionality with JWT authentication.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Features
 
-## Description
+- 🔐 **Authentication**: JWT-based authentication with register and login endpoints
+- 📋 **Task Management**: Create, read, update, and delete tasks with user-specific access control
+- 📚 **Course Management**: Course creation (admin only) and student registration
+- 👥 **User Roles**: Admin and Student role-based access control
+- 📝 **API Documentation**: Swagger UI for easy API exploration and testing
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Tech Stack
 
-## Project setup
+- **Backend Framework**: NestJS with TypeScript
+- **Database**: MongoDB with Mongoose ODM
+- **Authentication**: JWT with Passport.js
+- **Validation**: class-validator and class-transformer
+- **API Documentation**: Swagger/OpenAPI
 
-```bash
-$ npm install
+## Prerequisites
+
+- Node.js (v16+)
+- MongoDB (local installation or MongoDB Atlas)
+- npm or yarn
+
+## Installation
+
+1. Clone the repository:
+   ```bash
+   git clone <repository-url>
+   cd task-course-api
+   ```
+
+2. Install dependencies:
+   ```bash
+   npm install --legacy-peer-deps
+   ```
+   > **Note**: The `--legacy-peer-deps` flag is necessary to resolve some dependency conflicts with the latest NestJS version.
+
+3. Set up environment variables:
+   ```bash
+   cp .env.example .env
+   ```
+   Edit the `.env` file to configure your MongoDB connection and JWT settings.
+
+4. Seed the database with initial data:
+   ```bash
+   npm run seed
+   ```
+   This will create an admin user with the following credentials:
+   - Email: admin@example.com
+   - Password: password123
+
+5. Start the application:
+   ```bash
+   # Development mode
+   npm run start:dev
+   
+   # Production mode
+   npm run build
+   npm run start:prod
+   ```
+
+## API Documentation
+
+Once the application is running, you can access the Swagger documentation at:
+```
+http://localhost:3000/docs
 ```
 
-## Compile and run the project
+The Swagger UI provides a comprehensive interface to explore and test all available endpoints.
 
-```bash
-# development
-$ npm run start
+## API Endpoints
 
-# watch mode
-$ npm run start:dev
+### Authentication
 
-# production mode
-$ npm run start:prod
-```
+- `POST /api/auth/register` - Register a new user
+- `POST /api/auth/login` - Login and receive JWT token
 
-## Run tests
+### Task Management
 
-```bash
-# unit tests
-$ npm run test
+- `POST /api/tasks` - Create a new task
+- `GET /api/tasks` - List all tasks for the authenticated user
+- `GET /api/tasks/:id` - Get a specific task
+- `PUT /api/tasks/:id` - Update a task
+- `DELETE /api/tasks/:id` - Delete a task
 
-# e2e tests
-$ npm run test:e2e
+### Course Management
 
-# test coverage
-$ npm run test:cov
-```
+- `POST /api/courses` - Create a new course (admin only)
+- `GET /api/courses` - List all available courses
+- `GET /api/courses/:id` - Get a specific course
+- `PUT /api/courses/:id` - Update a course (admin only)
+- `DELETE /api/courses/:id` - Delete a course (admin only)
+- `POST /api/courses/:courseId/register` - Register the authenticated student for a course
+- `GET /api/courses/student/:studentId` - View all courses a student is registered in
 
-## Deployment
+### User Management
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+- `GET /api/users` - List all users (admin only)
+- `GET /api/users/:id` - Get a specific user
+- `PATCH /api/users/:id` - Update a user
+- `DELETE /api/users/:id` - Delete a user
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+## Core Logic
 
-```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
-```
+### Task Management
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+- Tasks are user-specific; users can only view, edit, and delete their own tasks
+- Tasks have a status lifecycle: pending → in-progress → done
+- TasksService handles CRUD operations with proper permission checks
 
-## Resources
+### Course Management
 
-Check out a few resources that may come in handy when working with NestJS:
+- Only admins can create, update, and delete courses
+- Students can register for multiple courses but cannot register for the same course twice
+- When a student registers for a course, the course reference is added to the student's registeredCourses array
+- CoursesService handles course management and registration logic
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+### User Authentication
 
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+- LoginThrottlerGuard provides rate limiting for login attempts to prevent brute force attacks
+- JwtAuthGuard protects routes that require authentication
+- RolesGuard enforces role-based access control for admin-only endpoints

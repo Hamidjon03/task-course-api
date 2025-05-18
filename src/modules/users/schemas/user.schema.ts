@@ -35,9 +35,6 @@ export class User {
 
 export const UserSchema = SchemaFactory.createForClass(User);
 
-// Index for email
-UserSchema.index({ email: 1 });
-
 // Hash password before saving
 UserSchema.pre('save', async function (this: any, next) {
   if (this.isModified('password')) {

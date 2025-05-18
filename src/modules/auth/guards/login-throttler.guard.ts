@@ -1,14 +1,13 @@
 import { Injectable, ExecutionContext } from '@nestjs/common';
-import { ThrottlerGuard, ThrottlerException } from '@nestjs/throttler';
+import { ThrottlerGuard, ThrottlerException, ThrottlerLimitDetail } from '@nestjs/throttler';
 
 @Injectable()
 export class LoginThrottlerGuard extends ThrottlerGuard {
-  // Override the default ttl and limit for login attempts
-  protected readonly throttler = {
-    ttl: 60, // Time window in seconds (1 minute)
-    limit: 5, // Max 5 login attempts per minute
-  };
+  // Custom rate limit values for login
+  protected limit = 5;
+  protected ttl = 60000; // 60 seconds in milliseconds
 
+  // Override the getTracker method to use IP address
   protected override getTracker(req: Record<string, any>): Promise<string> {
     // Use IP address as the tracker for rate limiting
     // This is more secure than using the user ID as it prevents
@@ -16,22 +15,14 @@ export class LoginThrottlerGuard extends ThrottlerGuard {
     return Promise.resolve(req.ip);
   }
 
-  // Override the handleRequest method to provide a custom error message
-  async handleRequest(context: ExecutionContext, limit: number, ttl: number, throttler: any, getTracker: any, generateKey: any): Promise<boolean> {
-    try {
-      // Override the limit and ttl with our custom values
-      const customLimit = this.throttler.limit;
-      const customTtl = this.throttler.ttl;
-      
-      return await super.handleRequest(context, customLimit, customTtl, throttler, getTracker, generateKey);
-    } catch (error) {
-      if (error instanceof ThrottlerException) {
-        // Customize the error message for login rate limiting
-        throw new ThrottlerException(
-          `Too many login attempts. Please try again after ${Math.ceil(this.throttler.ttl / 60)} minute(s).`
-        );
-      }
-      throw error;
-    }
+  // Custom error handler for login throttling with correct signature
+  protected override async throwThrottlingException(
+    context: ExecutionContext,
+    throttlerLimitDetail: ThrottlerLimitDetail,
+  ): Promise<void> {
+    // Custom error message for login rate limiting
+    throw new ThrottlerException(
+      `Too many login attempts. Please try again after ${Math.ceil(this.ttl / 60000)} minute(s).`
+    );
   }
 }
