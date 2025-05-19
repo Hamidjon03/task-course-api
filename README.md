@@ -94,9 +94,9 @@ The Swagger UI provides a comprehensive interface to explore and test all availa
 ### User Management
 
 - `GET /api/users` - List all users (admin only)
-- `GET /api/users/:id` - Get a specific user
-- `PATCH /api/users/:id` - Update a user
-- `DELETE /api/users/:id` - Delete a user
+- `GET /api/users/:id` - Get a specific user (admin only)
+- `PATCH /api/users/:id` - Update a user (admin only)
+- `DELETE /api/users/:id` - Delete a user (admin only)
 
 ## Core Logic
 
