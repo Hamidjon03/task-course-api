@@ -14,15 +14,16 @@ import {
   UpdateUserResponseDto, 
   DeleteUserResponseDto 
 } from './dto/user-response.dto';
+import { RolesGuard } from '../auth/guards/roles.guard';
 
 @ApiTags('Users')
 @ApiBearerAuth('JWT-auth')
 @Controller('users')
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, RolesGuard)
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @ApiOperation({ summary: 'Create a new user' })
+  @ApiOperation({ summary: 'Create a new user (admin only)' })
   @ApiResponse({ 
     status: 201, 
     description: 'User successfully created',
@@ -38,7 +39,7 @@ export class UsersController {
     return this.usersService.create(createUserDto);
   }
   
-  @ApiOperation({ summary: 'Get all users' })
+  @ApiOperation({ summary: 'Get all users (admin only)' })
   @ApiResponse({ 
     status: 200, 
     description: 'Users retrieved successfully',
@@ -51,7 +52,7 @@ export class UsersController {
     return this.usersService.findAll();
   }
   
-  @ApiOperation({ summary: 'Get a specific user by ID' })
+  @ApiOperation({ summary: 'Get a specific user by ID (admin only)' })
   @ApiResponse({ 
     status: 200, 
     description: 'User retrieved successfully',
@@ -68,7 +69,7 @@ export class UsersController {
     return this.usersService.findOne(id);
   }
   
-  @ApiOperation({ summary: 'Update a user' })
+  @ApiOperation({ summary: 'Update a user (admin only)' })
   @ApiResponse({ 
     status: 200, 
     description: 'User updated successfully',
@@ -89,7 +90,7 @@ export class UsersController {
     return this.usersService.update(id, updateUserDto);
   }
   
-  @ApiOperation({ summary: 'Delete a user' })
+  @ApiOperation({ summary: 'Delete a user (admin only)' })
   @ApiResponse({ 
     status: 200, 
     description: 'User deleted successfully',
